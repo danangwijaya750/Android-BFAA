@@ -4,18 +4,25 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dngwjy.githublist.R
-import com.dngwjy.githublist.abstraction.RvAdapter
-import com.dngwjy.githublist.data.User
+import com.dngwjy.githublist.abstraction.*
 import com.dngwjy.githublist.databinding.ActivityMainBinding
 import com.dngwjy.githublist.databinding.ItemUserBinding
+import com.dngwjy.githublist.domain.User
 import com.dngwjy.githublist.ui.detail.*
+import com.dngwjy.githublist.util.logD
 import com.dngwjy.githublist.util.logE
-import com.dngwjy.githublist.util.readData
+import com.dngwjy.githublist.util.toGone
+import com.dngwjy.githublist.util.toVisible
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),Observer<LiveDataState> {
+    private val mainViewModel by viewModel<MainViewModel>()
     private lateinit var binding: ActivityMainBinding
     private val listUser = mutableListOf<User>()
     private val adapter = object : RvAdapter<User, ItemUserBinding>(listUser, {
@@ -35,10 +42,23 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mainViewModel.liveDataState.observe(this,this)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setupRv()
-        getData()
+        binding.svUser.setOnQueryTextListener(object:SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if(!query.isNullOrEmpty()){
+                    getData()
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return true
+            }
+
+        })
     }
 
     private fun setupRv() {
@@ -49,9 +69,31 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getData() {
-        listUser.clear()
-        listUser.addAll(readData(R.raw.githubuser))
-        adapter.refreshData(listUser)
-        logE(listUser.size.toString())
+        mainViewModel.searchUser(binding.svUser.query.toString())
+    }
+
+    override fun onChanged(t: LiveDataState?) {
+        when(t){
+            is IsLoading->{
+                if(t.state){
+                    binding.pbLoading.toVisible()
+                }else{
+                    binding.pbLoading.toGone()
+                }
+            }
+            is IsError->{
+                logE(t.msg)
+            }
+            is ShowSearchUser->{
+                logD(t.data.size.toString())
+                listUser.clear()
+                listUser.addAll(t.data)
+                adapter.refreshData(listUser)
+            }
+            else -> {
+
+            }
+        }
+
     }
 }
