@@ -18,7 +18,7 @@ import com.dngwjy.githublist.util.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
-class MainActivity : AppCompatActivity(),Observer<LiveDataState> {
+class MainActivity : AppCompatActivity(), Observer<LiveDataState> {
     private val mainViewModel by viewModel<MainViewModel>()
     private lateinit var binding: ActivityMainBinding
     private val listUser = mutableListOf<User>()
@@ -43,9 +43,9 @@ class MainActivity : AppCompatActivity(),Observer<LiveDataState> {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setupRv()
-        binding.svUser.setOnQueryTextListener(object:SearchView.OnQueryTextListener{
+        binding.svUser.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                if(!query.isNullOrEmpty()){
+                if (!query.isNullOrEmpty()) {
                     getData()
                 }
                 return true
@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity(),Observer<LiveDataState> {
 
     override fun onResume() {
         super.onResume()
-        if(!binding.svUser.query.isNullOrEmpty()){
+        if (!binding.svUser.query.isNullOrEmpty()) {
             getData()
         }
     }
@@ -77,19 +77,19 @@ class MainActivity : AppCompatActivity(),Observer<LiveDataState> {
     }
 
     override fun onChanged(t: LiveDataState?) {
-        when(t){
-            is IsLoading->{
-                if(t.state){
+        when (t) {
+            is IsLoading -> {
+                if (t.state) {
                     binding.pbLoading.toVisible()
-                }else{
+                } else {
                     binding.pbLoading.toGone()
                 }
             }
-            is IsError->{
+            is IsError -> {
                 logE(t.msg)
                 toast(t.msg)
             }
-            is ShowSearchUser->{
+            is ShowSearchUser -> {
                 listUser.clear()
                 listUser.addAll(t.data)
                 adapter.refreshData(listUser)

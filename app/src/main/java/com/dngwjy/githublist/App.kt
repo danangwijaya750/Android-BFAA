@@ -6,7 +6,7 @@ import com.dngwjy.githublist.di.repositoryModule
 import com.dngwjy.githublist.di.viewModelModule
 import org.koin.core.context.startKoin
 
-class App:Application() {
+class App : Application() {
     override fun onCreate() {
         super.onCreate()
         startKoin {

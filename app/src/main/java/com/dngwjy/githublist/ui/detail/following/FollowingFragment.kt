@@ -10,10 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dngwjy.githublist.R
 import com.dngwjy.githublist.abstraction.*
-import com.dngwjy.githublist.databinding.FragmentFollowerBinding
 import com.dngwjy.githublist.databinding.FragmentFollowingBinding
 import com.dngwjy.githublist.databinding.ItemUserBinding
-import com.dngwjy.githublist.domain.DetailUser
 import com.dngwjy.githublist.domain.User
 import com.dngwjy.githublist.ui.detail.DetailActivity
 import com.dngwjy.githublist.ui.main.UserVH
@@ -23,7 +21,7 @@ import com.dngwjy.githublist.util.toVisible
 import kotlinx.coroutines.cancel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class FollowingFragment:Fragment(R.layout.fragment_following),Observer<LiveDataState> {
+class FollowingFragment : Fragment(R.layout.fragment_following), Observer<LiveDataState> {
 
     companion object {
         fun getInstance(): FollowingFragment = FollowingFragment()
@@ -39,11 +37,12 @@ class FollowingFragment:Fragment(R.layout.fragment_following),Observer<LiveDataS
 
     }) {
         override fun getViewBinding(parent: ViewGroup, viewType: Int): ItemUserBinding =
-                ItemUserBinding.inflate(layoutInflater, parent, false)
+            ItemUserBinding.inflate(layoutInflater, parent, false)
 
         override fun layoutId(position: Int, obj: User): Int = R.layout.item_user
 
-        override fun viewHolder(binding: ItemUserBinding, viewType: Int): RecyclerView.ViewHolder = UserVH(binding)
+        override fun viewHolder(binding: ItemUserBinding, viewType: Int): RecyclerView.ViewHolder =
+            UserVH(binding)
 
     }
 

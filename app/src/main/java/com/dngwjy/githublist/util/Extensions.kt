@@ -13,14 +13,15 @@ inline fun <reified T> T.logD(msg: String) = msg.let {
     Log.d(T::class.java.simpleName, it)
 }
 
-fun Context.toast(msg:String){
+fun Context.toast(msg: String) {
     Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
 }
 
-fun View.toGone(){
-    this.visibility=View.GONE
+fun View.toGone() {
+    this.visibility = View.GONE
 }
-fun View.toVisible(){
-    this.visibility=View.VISIBLE
+
+fun View.toVisible() {
+    this.visibility = View.VISIBLE
 }
 

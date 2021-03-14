@@ -11,12 +11,16 @@ import retrofit2.http.Query
 interface WebService {
     @GET("users")
     fun getUsers(): Observable<List<User>>
+
     @GET("users/{username}")
-    fun getDetailUser(@Path("username") username:String):Observable<DetailUser>
+    fun getDetailUser(@Path("username") username: String): Observable<DetailUser>
+
     @GET("users/{username}/followers")
-    fun getFollowers(@Path("username") username:String):Observable<List<User>>
+    fun getFollowers(@Path("username") username: String): Observable<List<User>>
+
     @GET("users/{username}/following")
-    fun getFollowing(@Path("username") username:String):Observable<List<User>>
+    fun getFollowing(@Path("username") username: String): Observable<List<User>>
+
     @GET("search/users")
-    fun getSearchUser(@Query("q") username:String):Observable<SearchResponse>
+    fun getSearchUser(@Query("q") username: String): Observable<SearchResponse>
 }

@@ -18,7 +18,10 @@ import com.dngwjy.githublist.domain.DetailUser
 import com.dngwjy.githublist.domain.User
 import com.dngwjy.githublist.ui.detail.follower.FollowerFragment
 import com.dngwjy.githublist.ui.detail.following.FollowingFragment
-import com.dngwjy.githublist.util.*
+import com.dngwjy.githublist.util.logE
+import com.dngwjy.githublist.util.toGone
+import com.dngwjy.githublist.util.toVisible
+import com.dngwjy.githublist.util.toast
 import kotlinx.coroutines.cancel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -39,8 +42,8 @@ class DetailActivity : AppCompatActivity(), Observer<LiveDataState>, LifecycleOb
         setContentView(binding.root)
     }
 
-    private fun setupViewPager(){
-        binding.vpFollow.adapter=ViewPagerAdapter(supportFragmentManager)
+    private fun setupViewPager() {
+        binding.vpFollow.adapter = ViewPagerAdapter(supportFragmentManager)
         binding.tabLayout.setupWithViewPager(binding.vpFollow)
     }
 
@@ -78,7 +81,7 @@ class DetailActivity : AppCompatActivity(), Observer<LiveDataState>, LifecycleOb
             is IsLoading -> {
                 if (t.state) {
                     binding.pbLoading.toVisible()
-                }else{
+                } else {
                     binding.pbLoading.toGone()
                 }
             }
@@ -101,12 +104,14 @@ class DetailActivity : AppCompatActivity(), Observer<LiveDataState>, LifecycleOb
         binding.tvCompany.text = data.company
         binding.tvUsername.text = data.name
         binding.tvFollow.text = StringBuilder("Followers : ").append(data.followers)
-                .append(" Following : ").append(data.following)
+            .append(" Following : ").append(data.following)
     }
 
-    inner class ViewPagerAdapter(fm:FragmentManager):FragmentPagerAdapter(fm){
-        private val titles = listOf("Followers","Following")
-        private val pages = listOf<Fragment>(FollowerFragment.getInstance(),FollowingFragment.getInstance())
+    inner class ViewPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
+        private val titles = listOf("Followers", "Following")
+        private val pages =
+            listOf<Fragment>(FollowerFragment.getInstance(), FollowingFragment.getInstance())
+
         override fun getCount(): Int = titles.size
 
         override fun getItem(position: Int): Fragment = pages[position]

@@ -6,11 +6,13 @@ import kotlinx.parcelize.Parcelize
 data class Data(
     val users: List<User>
 )
+
 data class SearchResponse(
     val total_count: Int,
     val incomplete_results: Boolean,
-    val items:List<User>
+    val items: List<User>
 )
+
 @Parcelize
 data class User(
     val avatar_url: String,
@@ -31,7 +33,7 @@ data class User(
     val subscriptions_url: String,
     val type: String,
     val url: String
-):Parcelable
+) : Parcelable
 
 data class DetailUser(
     val avatar_url: String,

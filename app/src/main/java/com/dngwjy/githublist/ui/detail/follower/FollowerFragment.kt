@@ -21,23 +21,24 @@ import com.dngwjy.githublist.util.toVisible
 import kotlinx.coroutines.cancel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class FollowerFragment:Fragment(R.layout.fragment_follower),Observer<LiveDataState> {
+class FollowerFragment : Fragment(R.layout.fragment_follower), Observer<LiveDataState> {
 
-    companion object{
-        fun getInstance():FollowerFragment = FollowerFragment()
+    companion object {
+        fun getInstance(): FollowerFragment = FollowerFragment()
     }
 
-    private lateinit var binding:FragmentFollowerBinding
-    private val listFollower= mutableListOf<User>()
-    private val adapter=object: RvAdapter<User, ItemUserBinding>(listFollower,{
+    private lateinit var binding: FragmentFollowerBinding
+    private val listFollower = mutableListOf<User>()
+    private val adapter = object : RvAdapter<User, ItemUserBinding>(listFollower, {
 
-    }){
+    }) {
         override fun getViewBinding(parent: ViewGroup, viewType: Int): ItemUserBinding =
-                ItemUserBinding.inflate(layoutInflater,parent,false)
+            ItemUserBinding.inflate(layoutInflater, parent, false)
 
         override fun layoutId(position: Int, obj: User): Int = R.layout.item_user
 
-        override fun viewHolder(binding: ItemUserBinding, viewType: Int): RecyclerView.ViewHolder = UserVH(binding)
+        override fun viewHolder(binding: ItemUserBinding, viewType: Int): RecyclerView.ViewHolder =
+            UserVH(binding)
 
     }
 
@@ -45,8 +46,8 @@ class FollowerFragment:Fragment(R.layout.fragment_follower),Observer<LiveDataSta
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.liveDataState.observe(viewLifecycleOwner,this)
-        binding= FragmentFollowerBinding.bind(view)
+        viewModel.liveDataState.observe(viewLifecycleOwner, this)
+        binding = FragmentFollowerBinding.bind(view)
         setupRv()
 
     }
@@ -55,38 +56,41 @@ class FollowerFragment:Fragment(R.layout.fragment_follower),Observer<LiveDataSta
         super.onResume()
         viewModel.getFollowers(DetailActivity.username)
     }
-    private fun setupRv(){
+
+    private fun setupRv() {
         binding.rvFollower.apply {
-            layoutManager=LinearLayoutManager(this@FollowerFragment.context)
-            adapter=this@FollowerFragment.adapter
+            layoutManager = LinearLayoutManager(this@FollowerFragment.context)
+            adapter = this@FollowerFragment.adapter
         }
     }
 
     override fun onChanged(t: LiveDataState?) {
-        when(t){
-            is IsLoading->{
-                if(t.state){
+        when (t) {
+            is IsLoading -> {
+                if (t.state) {
                     binding.pbLoading.toVisible()
-                }else{
+                } else {
                     binding.pbLoading.toGone()
                 }
             }
-            is ShowFollowers->{
+            is ShowFollowers -> {
                 showData(t.data)
             }
-            is IsError->{
+            is IsError -> {
                 logE(t.msg)
             }
-            else ->{
+            else -> {
 
             }
         }
     }
-    private fun showData(data:List<User>){
+
+    private fun showData(data: List<User>) {
         listFollower.clear()
         listFollower.addAll(data)
         adapter.refreshData(listFollower)
     }
+
     override fun onDestroy() {
         viewModel.viewModelScope.cancel()
         viewModelStore.clear()

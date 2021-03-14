@@ -1,6 +1,5 @@
 package com.dngwjy.githublist.ui.main
 
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.dngwjy.githublist.abstraction.RvAdapter

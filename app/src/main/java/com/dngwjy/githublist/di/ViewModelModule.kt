@@ -6,14 +6,14 @@ import com.dngwjy.githublist.ui.detail.following.FollowingViewModel
 import com.dngwjy.githublist.ui.main.MainViewModel
 import org.koin.dsl.module
 
-val viewModelModule= module {
+val viewModelModule = module {
     single {
         MainViewModel(get())
     }
-    single{
+    single {
         DetailViewModel(get())
     }
-    single{
+    single {
         FollowerViewModel(get())
     }
     single {
