@@ -14,10 +14,7 @@ import com.dngwjy.githublist.databinding.ActivityMainBinding
 import com.dngwjy.githublist.databinding.ItemUserBinding
 import com.dngwjy.githublist.domain.User
 import com.dngwjy.githublist.ui.detail.*
-import com.dngwjy.githublist.util.logD
-import com.dngwjy.githublist.util.logE
-import com.dngwjy.githublist.util.toGone
-import com.dngwjy.githublist.util.toVisible
+import com.dngwjy.githublist.util.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
@@ -42,7 +39,7 @@ class MainActivity : AppCompatActivity(),Observer<LiveDataState> {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mainViewModel.liveDataState.observe(this,this)
+        mainViewModel.liveDataState.observe(this, this)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setupRv()
@@ -59,6 +56,13 @@ class MainActivity : AppCompatActivity(),Observer<LiveDataState> {
             }
 
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(!binding.svUser.query.isNullOrEmpty()){
+            getData()
+        }
     }
 
     private fun setupRv() {
@@ -83,9 +87,9 @@ class MainActivity : AppCompatActivity(),Observer<LiveDataState> {
             }
             is IsError->{
                 logE(t.msg)
+                toast(t.msg)
             }
             is ShowSearchUser->{
-                logD(t.data.size.toString())
                 listUser.clear()
                 listUser.addAll(t.data)
                 adapter.refreshData(listUser)
@@ -94,6 +98,5 @@ class MainActivity : AppCompatActivity(),Observer<LiveDataState> {
 
             }
         }
-
     }
 }

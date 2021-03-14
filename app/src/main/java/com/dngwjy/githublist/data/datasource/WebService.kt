@@ -3,19 +3,20 @@ package com.dngwjy.githublist.data.datasource
 import com.dngwjy.githublist.domain.DetailUser
 import com.dngwjy.githublist.domain.SearchResponse
 import com.dngwjy.githublist.domain.User
+import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface WebService {
     @GET("users")
-    suspend fun getUsers():List<User>
+    fun getUsers(): Observable<List<User>>
     @GET("users/{username}")
-    suspend fun getDetailUser(@Path("username") username:String):DetailUser
+    fun getDetailUser(@Path("username") username:String):Observable<DetailUser>
     @GET("users/{username}/followers")
-    suspend fun getFollowers(@Path("username") username:String):List<User>
+    fun getFollowers(@Path("username") username:String):Observable<List<User>>
     @GET("users/{username}/following")
-    suspend fun getFollowing(@Path("username") username:String):List<User>
+    fun getFollowing(@Path("username") username:String):Observable<List<User>>
     @GET("search/users")
-    suspend fun getSearchUser(@Query("q") username:String):SearchResponse
+    fun getSearchUser(@Query("q") username:String):Observable<SearchResponse>
 }

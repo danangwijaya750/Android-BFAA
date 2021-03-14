@@ -7,29 +7,33 @@ import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import com.dngwjy.githublist.databinding.ActivitySplashScreenBinding
 import com.dngwjy.githublist.ui.main.MainActivity
+import io.reactivex.Observable
+import io.reactivex.disposables.CompositeDisposable
+import java.util.concurrent.TimeUnit
 
 class SplashScreenActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySplashScreenBinding
-    private var handler: Handler? = null
+    private val compositeDisposable=CompositeDisposable()
     override fun onCreate(savedInstanceState: Bundle?) {
         window.requestFeature(Window.FEATURE_ACTION_BAR)
         super.onCreate(savedInstanceState)
         binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.hide()
-        handler = Handler()
         doSplash()
     }
 
     private fun doSplash() {
-        handler?.postDelayed({
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
-        }, 2000)
+       compositeDisposable.add(Observable.timer(2,TimeUnit.SECONDS)
+           .subscribe{
+               startActivity(Intent(this,MainActivity::class.java))
+               finish()
+           })
+
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        handler = null
+    override fun onStop() {
+        super.onStop()
+        compositeDisposable.dispose()
     }
 }
