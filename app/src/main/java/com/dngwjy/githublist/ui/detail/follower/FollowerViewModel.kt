@@ -15,10 +15,6 @@ class FollowerViewModel(private val repository: UserRepository) : BaseViewModel(
     private lateinit var listFollower: MutableList<User>
 
     fun getFollowers(username: String) {
-        if (this::listFollower.isInitialized) {
-            liveDataState.value = ShowFollowers(listFollower)
-            return
-        }
         listFollower = mutableListOf()
         disposable.add(
             repository.getFollowers(username)

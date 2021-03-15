@@ -14,10 +14,6 @@ import io.reactivex.schedulers.Schedulers
 class DetailViewModel(private val repository: UserRepository) : BaseViewModel() {
     private lateinit var detailUser: DetailUser
     fun getUserDetail(username: String) {
-        if (this::detailUser.isInitialized) {
-            liveDataState.value = ShowDetailUser(detailUser)
-            return
-        }
         disposable.add(
             repository.getDetailUser(username)
                 .subscribeOn(Schedulers.io())
