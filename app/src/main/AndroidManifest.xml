@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.dngwjy.githublist">
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <permission
+        android:name="com.dngwjy.githublist.READ_WRITE"
+        android:protectionLevel="normal"/>
 
     <application
         android:name=".App"
@@ -11,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GithubList">
-        <activity android:name=".ui.main.MainActivity"/>
+        <activity android:name=".ui.favourite.FavouriteActivity"></activity>
+        <activity android:name=".ui.main.MainActivity" />
         <activity android:name=".ui.detail.DetailActivity" />
         <activity android:name=".ui.splash.SplashScreenActivity">
             <intent-filter>
@@ -20,6 +25,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver
+            android:name=".data.service.DailyReminderService"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <provider
+            android:name=".data.provider.DataProvider"
+            android:authorities="com.dngwjy.githublist"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="com.dngwjy.githublist.READ_WRITE"/>
     </application>
 
 </manifest>

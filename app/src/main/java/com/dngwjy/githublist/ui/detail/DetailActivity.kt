@@ -1,6 +1,7 @@
 package com.dngwjy.githublist.ui.detail
 
 import android.os.Bundle
+import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -9,19 +10,15 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.Glide
-import com.dngwjy.githublist.abstraction.IsError
-import com.dngwjy.githublist.abstraction.IsLoading
-import com.dngwjy.githublist.abstraction.LiveDataState
-import com.dngwjy.githublist.abstraction.ShowDetailUser
+import com.dngwjy.githublist.R
+import com.dngwjy.githublist.abstraction.*
+import com.dngwjy.githublist.data.local.FavouriteUser
 import com.dngwjy.githublist.databinding.ActivityDetailBinding
 import com.dngwjy.githublist.domain.DetailUser
 import com.dngwjy.githublist.domain.User
 import com.dngwjy.githublist.ui.detail.follower.FollowerFragment
 import com.dngwjy.githublist.ui.detail.following.FollowingFragment
-import com.dngwjy.githublist.util.logE
-import com.dngwjy.githublist.util.toGone
-import com.dngwjy.githublist.util.toVisible
-import com.dngwjy.githublist.util.toast
+import com.dngwjy.githublist.util.*
 import kotlinx.coroutines.cancel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -31,15 +28,20 @@ class DetailActivity : AppCompatActivity(), Observer<LiveDataState>, LifecycleOb
 
     companion object {
         var username = ""
+        var id=0
     }
 
     private lateinit var binding: ActivityDetailBinding
+    private var isFavourite = false
+    private var data: User? =null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.requestFeature(Window.FEATURE_ACTION_BAR)
         lifecycle.addObserver(this)
         detailViewModel.liveDataState.observe(this, this)
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        supportActionBar?.hide()
     }
 
     private fun setupViewPager() {
@@ -48,11 +50,12 @@ class DetailActivity : AppCompatActivity(), Observer<LiveDataState>, LifecycleOb
     }
 
     private fun showData() {
-        val data = intent.getParcelableExtra<User>("data")
+        data = intent.getParcelableExtra<User>("data")
         if (data != null) {
-            Glide.with(this).load(data.avatar_url).circleCrop().into(binding.ivAvatar)
-            binding.tvName.text = data.login
-            username = data.login
+            Glide.with(this).load(data?.avatar_url).circleCrop().into(binding.ivAvatar)
+            binding.tvName.text = data?.login
+            username = data!!.login
+            id=data!!.id
         }
     }
 
@@ -60,6 +63,7 @@ class DetailActivity : AppCompatActivity(), Observer<LiveDataState>, LifecycleOb
         super.onResume()
         showData()
         detailViewModel.getUserDetail(username)
+        detailViewModel.checkFavourite(id)
         setupViewPager()
     }
 
@@ -91,10 +95,40 @@ class DetailActivity : AppCompatActivity(), Observer<LiveDataState>, LifecycleOb
             is IsError -> {
                 toast(t.msg)
             }
+            is IsSuccessAdd->{
+                isFavourite=true
+                updateFavButton()
+            }
+            is IsSuccessRemove->{
+                isFavourite=false
+                updateFavButton()
+            }
+            is IsFavourite->{
+                isFavourite=t.state
+                logE(t.state.toString())
+                updateFavButton()
+            }
             else -> {
 
             }
         }
+    }
+
+    private fun updateFavButton(){
+        if(isFavourite){
+            binding.ivFavourite.setImageResource(R.drawable.ic_baseline_favorite_24)
+            binding.ivFavourite.setOnClickListener {
+                detailViewModel.removeFavourite(
+                        data!!.toFavourite())
+            }
+        }else{
+            binding.ivFavourite.setImageResource(R.drawable.ic_baseline_favorite_border_24)
+            binding.ivFavourite.setOnClickListener {
+                detailViewModel.addFavourite(
+                        data!!.toFavourite())
+            }
+        }
+
     }
 
     private fun showDetail(data: DetailUser) {
